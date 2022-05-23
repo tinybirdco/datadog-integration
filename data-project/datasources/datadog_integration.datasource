@@ -1,0 +1,11 @@
+TOKEN datadog_integration_token APPEND
+
+SCHEMA >
+    `pipeline` String `json:$.pipeline`,
+    `timestamp` DateTime `json:$.timestamp`
+
+ENGINE "ReplacingMergeTree"
+ENGINE_VER "timestamp"
+ENGINE_PARTITION_KEY "tuple()"
+ENGINE_SORTING_KEY "pipeline"
+

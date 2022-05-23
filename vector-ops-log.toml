@@ -1,0 +1,67 @@
+[sources.in]
+type = "stdin"
+
+[sinks.ddog]
+type = "datadog_metrics"
+inputs = [ "to_metric" ]
+api_key = "${DATADOG_API_KEY}"
+default_namespace = "tb"
+region = "${DATADOG_REGION}"
+
+[sinks.console]
+inputs = ["parse"]
+type = "console"
+encoding.codec = "json"
+
+[sinks.tinybird]
+inputs = ["parse"]
+type = "http"
+uri = "https://api.us-east.tinybird.co/v0/events?name=datadog_integration&token=${TB_TOKEN}"
+encoding.codec = "ndjson"
+encoding.only_fields = ["pipeline", "timestamp"]
+
+[transforms.parse]
+type = "remap"
+inputs = [ "in" ]
+source = """
+  . = parse_json!(.message)
+  .timestamp = to_timestamp!(.timestamp)
+  .pipeline = "ops_log"
+"""
+
+[transforms.to_metric]
+type = "log_to_metric"
+inputs = [ "parse" ]
+
+  [[transforms.to_metric.metrics]]
+  field = "elapsed_time"
+  name = "duration"
+  namespace = "tb.datasources"
+  type = "gauge"
+
+    [transforms.to_metric.metrics.tags]
+    datasource = "{{datasource_name}}"
+    event_type = "{{event_type}}"
+    status = "{{result}}"
+
+  [[transforms.to_metric.metrics]]
+  field = "rows"
+  namespace = "tb.datasources"
+  type = "counter"
+  increment_by_value = true
+
+    [transforms.to_metric.metrics.tags]
+    datasource = "{{datasource_name}}"
+    event_type = "{{event_type}}"
+    status = "{{result}}"
+
+  [[transforms.to_metric.metrics]]
+  field = "count"
+  namespace = "tb.datasources"
+  type = "counter"
+  increment_by_value = true
+
+    [transforms.to_metric.metrics.tags]
+    datasource = "{{datasource_name}}"
+    event_type = "{{event_type}}"
+    status = "{{result}}"

@@ -1,0 +1,31 @@
+name: datadog_integration
+
+on:
+  workflow_dispatch:
+    manual: true
+  schedule:
+    - cron: '*/10 * * * *'
+
+jobs:
+  datadog:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+    - run: sudo apt-get install --yes curl bc
+    - run:  curl --proto '=https' --tlsv1.2 -sSf https://sh.vector.dev | bash -s -- -y
+    - run: ~/.vector/bin/vector --version
+    - name: pipes_stats_to_datadog
+      run: |
+        curl "https://api.us-east.tinybird.co/v0/pipes/ep_datadog_pipes_stats.ndjson?token=${TB_TOKEN}" | ~/.vector/bin/vector --config ./vector-pipes-stats.toml
+      env:
+        TB_TOKEN: ${{ secrets.TB_TOKEN }}
+        DATADOG_API_KEY: ${{ secrets.DATADOG_API_KEY }}
+        DATADOG_REGION: ${{ secrets.DATADOG_REGION }}
+    - name: ops_log_to_datadog
+      run: |
+        curl "https://api.us-east.tinybird.co/v0/pipes/ep_datadog_ops_log.ndjson?token=${TB_TOKEN}" | ~/.vector/bin/vector --config ./vector-ops-log.toml
+      env:
+        TB_TOKEN: ${{ secrets.TB_TOKEN }}
+        DATADOG_API_KEY: ${{ secrets.DATADOG_API_KEY }}
+        DATADOG_REGION: ${{ secrets.DATADOG_REGION }}

@@ -1,0 +1,17 @@
+TOKEN datadog_integration_token READ
+
+NODE endpoint
+
+SQL >
+    SELECT
+        toInt32(toStartOfMinute(timestamp)) AS timestamp,
+        datasource_name,
+        event_type,
+        result,
+        count() AS count,
+        sum(elapsed_time) AS elapsed_time,
+        sum(coalesce(rows, 0)) AS rows
+    FROM tinybird.datasources_ops_log
+    WHERE timestamp >= (SELECT max(timestamp) + interval 1 minute FROM datadog_integration WHERE pipeline = 'ops_log')
+        AND timestamp < toStartOfMinute(now())
+    GROUP BY timestamp, datasource_name, event_type, result
