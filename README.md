@@ -37,3 +37,24 @@ To configure the GitHub Actions, you'll have to create the following environment
 - `TB_TOKEN`: Tinybird token named `datadog_integration_token`
 - `DATADOG_API_KEY`: Datadog API Key
 - `DATADOG_REGION`: Datadog region
+
+## How everything works?
+
+The process basically uses vector.dev to read data from Tinybird API endpoints, makes basic transformations to generate metrics, and sends data to Datadog. The jobs are scheduled to run every 10 minutes, running the following commands:
+
+```bash
+curl "https://api.us-east.tinybird.co/v0/pipes/ep_datadog_pipes_stats.ndjson?token=${TB_TOKEN}" | ~/.vector/bin/vector --config ./vector-pipes-stats.toml
+curl "https://api.us-east.tinybird.co/v0/pipes/ep_datadog_ops_log.ndjson?token=${TB_TOKEN}" | ~/.vector/bin/vector --config ./vector-ops-log.toml
+```
+
+## Metrics
+
+| metric_name             | metric_type | interval | unit_name  |
+|-------------------------|-------------|----------|------------|
+| tb.pipes.count          | count       | 1min     | requests   |
+| tb.pipes.duration       | gauge       | 1min     | seconds    |
+| tb.pipes.duration_p99   | gauge       | 1min     | seconds    |
+| tb.pipes.read_bytes     | count       | 1min     | bytes      |
+| tb.datasources.count    | count       | 1min     | operations |
+| tb.datasources.rows     | count       | 1min     | rows       |
+| tb.datasources.duration | gauge       | 1min     | seconds    |
