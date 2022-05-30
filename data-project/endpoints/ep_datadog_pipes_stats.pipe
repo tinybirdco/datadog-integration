@@ -3,6 +3,12 @@ TOKEN datadog_integration_token READ
 NODE endpoint
 
 SQL >
+    WITH (
+        SELECT greatest(
+            max(timestamp) + toIntervalMinute(1),
+            now() - interval 1 day
+        ) FROM datadog_integration WHERE pipeline = 'pipe_stats'
+    ) AS last_timestamp
     SELECT
         toInt32(toStartOfMinute(start_datetime)) AS timestamp,
         pipe_name,
@@ -11,6 +17,6 @@ SQL >
         quantile(0.99)(duration) duration_p99,
         sum(read_bytes) read_bytes
     FROM tinybird.pipe_stats_rt
-    WHERE start_datetime >= (SELECT max(timestamp) + interval 1 minute FROM datadog_integration WHERE pipeline = 'pipe_stats')
+    WHERE timestamp >= last_timestamp
         AND start_datetime < toStartOfMinute(now())
     GROUP BY timestamp, pipe_name

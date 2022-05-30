@@ -3,6 +3,12 @@ TOKEN datadog_integration_token READ
 NODE endpoint
 
 SQL >
+    WITH (
+        SELECT greatest(
+            max(timestamp) + toIntervalMinute(1),
+            now() - interval 1 day
+        ) FROM datadog_integration WHERE pipeline = 'ops_log'
+    ) AS last_timestamp
     SELECT
         toInt32(toStartOfMinute(timestamp)) AS timestamp,
         datasource_name,
@@ -12,6 +18,6 @@ SQL >
         sum(elapsed_time) AS elapsed_time,
         sum(coalesce(rows, 0)) AS rows
     FROM tinybird.datasources_ops_log
-    WHERE timestamp >= (SELECT max(timestamp) + interval 1 minute FROM datadog_integration WHERE pipeline = 'ops_log')
+    WHERE timestamp >= last_timestamp
         AND timestamp < toStartOfMinute(now())
     GROUP BY timestamp, datasource_name, event_type, result
