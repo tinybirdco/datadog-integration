@@ -1,6 +1,6 @@
 # Tinybird <> Datadog integration
 
-This data project demonstrates how users can integrate [Tinybird](https://tinybird.co) with [Datadog](https://datadog.com/) bulding endpoints on top of the [Service Data Sources](Service Data Sources) and using [vector.dev](https://vector.dev).
+This data project demonstrates how users can integrate [Tinybird](https://tinybird.co) with [Datadog](https://datadog.com/) bulding endpoints on top of the [Tinybird Service Data Sources](https://docs.tinybird.co/monitoring/service-datasources.html) and using [vector.dev](https://vector.dev).
 
 The project is defined by:
 
