@@ -30,21 +30,22 @@ The process will also create a token named `datadog_integration_token` with read
 
 ## Configure GitHub Actions
 
-> :warning: Note: This repository illustrates how to do the integration using GitHub Action but you can use the job scheduler best fits your current architecture. 
+> :warning: Note: This repository illustrates how to do the integration using GitHub Action but you can use the job scheduler best fits your current architecture.
 
 To configure the GitHub Actions, you'll have to create the following environment variables:
 
 - `TB_TOKEN`: Tinybird token named `datadog_integration_token`
+- `TB_HOST`: Tinybird host: "api.us-east" for us or "api" for eu
 - `DATADOG_API_KEY`: Datadog API Key
-- `DATADOG_REGION`: Datadog region
+- `DATADOG_REGION`: Datadog region: "us|eu" [Context](https://vector.dev/docs/reference/configuration/sinks/datadog_metrics/#region)
 
 ## How everything works?
 
 The process basically uses vector.dev to read data from Tinybird API endpoints, makes basic transformations to generate metrics, and sends data to Datadog. The jobs are scheduled to run every 10 minutes, running the following commands:
 
 ```bash
-curl "https://api.us-east.tinybird.co/v0/pipes/ep_datadog_pipes_stats.ndjson?token=${TB_TOKEN}" | ~/.vector/bin/vector --config ./vector-pipes-stats.toml
-curl "https://api.us-east.tinybird.co/v0/pipes/ep_datadog_ops_log.ndjson?token=${TB_TOKEN}" | ~/.vector/bin/vector --config ./vector-ops-log.toml
+curl "https://${TB_HOST}.tinybird.co/v0/pipes/ep_datadog_pipes_stats.ndjson?token=${TB_TOKEN}" | ~/.vector/bin/vector --config ./vector-pipes-stats.toml
+curl "https://${TB_HOST}.tinybird.co/v0/pipes/ep_datadog_ops_log.ndjson?token=${TB_TOKEN}" | ~/.vector/bin/vector --config ./vector-ops-log.toml
 ```
 
 ## Metrics

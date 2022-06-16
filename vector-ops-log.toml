@@ -16,7 +16,7 @@ encoding.codec = "json"
 [sinks.tinybird]
 inputs = ["parse"]
 type = "http"
-uri = "https://api.us-east.tinybird.co/v0/events?name=datadog_integration&token=${TB_TOKEN}"
+uri = "https://${TB_HOST}.tinybird.co/v0/events?name=datadog_integration&token=${TB_TOKEN}"
 encoding.codec = "ndjson"
 encoding.only_fields = ["pipeline", "timestamp"]
 
