@@ -10,7 +10,7 @@ The project is defined by:
 
 ## Push data project to Tinybird
 
-The data project is defined in the `/data-project` folder. To push teh project to Tibynird, you just have to install and configure the Tinybird CLI following [these instructions](https://docs.tinybird.co/cli.html), and then execute
+The data project is defined in the `/data-project` folder. To push the project to Tinybird, you just have to install and configure the Tinybird CLI following [these instructions](https://docs.tinybird.co/cli.html), and then execute
 
 ```bash
 cd data-project
