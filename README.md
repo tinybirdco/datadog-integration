@@ -2,6 +2,8 @@
 
 This data project demonstrates how users can integrate [Tinybird](https://tinybird.co) with [Datadog](https://datadog.com/) bulding endpoints on top of the [Tinybird Service Data Sources](https://docs.tinybird.co/monitoring/service-datasources.html) and using [vector.dev](https://vector.dev).
 
+> Note: This example uses vector.dev version 0.22.2. We're not actively maintaining this example. If you want to use a newer version, you would have to update the configuration from `vector-ops-log.toml` and `vector-pipes-stats.toml`.
+
 The project is defined by:
 
 - **Data project**: The Tinybird data project
